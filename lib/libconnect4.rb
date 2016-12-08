@@ -30,6 +30,11 @@ module LibConnect4
             @board.transpose
         end
 
+        def diagonals
+            # TODO: this method!
+            []
+        end
+
         def each
             self.rows.flat_map {|row| row.each }
         end
@@ -69,6 +74,48 @@ module LibConnect4
 
         def can_move_in_column?(col)
             @board.columns[col].any? {|cell| cell == LibConnect4::Empty }
+        end
+
+        def winner
+            # check rows
+            winner = self.check_cell_groups(@board.rows, @board.column_count - 3)
+            if (winner != nil) then 
+                return winner 
+            end
+            # check cols
+            winner = self.check_cell_groups(@board.columns, @board.row_count - 3)
+            if (winner != nil) then 
+                return winner 
+            end
+
+            # check diagonals
+            # Step one: identify diagonals from game board
+        end
+
+        protected
+        def check_cell_groups(cell_groups, last_cell_to_check)
+            for group in cell_groups do
+                for i in 0..last_cell_to_check do
+                    winner_exists = self.all_the_same_color([
+                        group[i],
+                        group[i+1],
+                        group[i+2],
+                        group[i+3]
+                    ])
+                    if (winner_exists) then
+                        return group[i]
+                    end
+                end
+            end
+            return nil
+        end
+        def all_the_same_color(cells) 
+            for i in (0..(cells.length - 2)) do
+                if cells[i] == LibConnect4::Empty or cells[i] != cells[i+1] then
+                    return false
+                end
+            end
+            return true
         end
     end
 
