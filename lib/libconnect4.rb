@@ -34,6 +34,19 @@ module LibConnect4
             self.rows.flat_map {|row| row.each }
         end
 
+        def to_s
+            rows.reverse.map do |row|
+                cells = row.map do |cell| 
+                    case cell 
+                        when LibConnect4::Red then "R" 
+                        when LibConnect4::Black then "B" 
+                        else "O"
+                    end
+                end.join(" ")
+                "| #{cells} |"
+            end.join("\n")
+        end
+
         private
         attr_accessor :board
     end
