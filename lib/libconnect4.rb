@@ -219,7 +219,7 @@ module LibConnect4
                     # Of all the possible moves, since it's our turn, we want to 
                     #   see if there's one we can find that's better than our current "best", so we can pick the best route
                     board.available_moves.each do |move|
-                        best_move_value_for_this_branch = board.clone
+                        board_for_next_move = board.clone
                         game_for_next_move = Game.new(board: board_for_next_move)
                         game_for_next_move.move @my_color, move
                         best_move_value_for_this_branch = [best_move_value_for_this_branch, alphabeta(game_for_next_move.board, current_moves_ahead+1, alpha, beta, false)[:score]].max
