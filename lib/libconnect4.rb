@@ -194,7 +194,28 @@ module LibConnect4
         end
 
         def score_possible_board_state board_state
-            # TODO: scoring mechanism!
+            game_for_this_board = Game.new(board: board_state)
+            winner = game_for_this_board.winner
+            if winner == nil then
+                all_cell_groups_to_check = 
+                    board_state.columns + board_state.rows + (board_state.right_diagonals.select{|diag| diag.length > 3}) + (board_state.left_diagonals.select{|diag| diag.length > 3})
+                all_cell_groups_to_check.reduce(0) {|acc, group| acc + (score_group group)}
+            else
+                case winner 
+                    when @my_color then 10000
+                    when @opponent_color then -10000
+                end
+            end
+        end
+        def score_group cell_group 
+            # TODO: 
+            #   * If I'm 1 move away from victory, +1000 points for each near-victory
+            #   * If I'm 2 moves away from victory, +100 points for each near-victory
+            #   * Otherwise, +0 (neutral)
+            #  Similarly,
+            #   * If my opponent is 1 move away from victory, -1000 points for each near-victory
+            #   * If my opponent is 2 moves away from victory, -100 points for each near-victory
+            #   * Otherwise, -0 (neutral)
         end
 
         def should_stop_searching? board_state, moves_ahead
