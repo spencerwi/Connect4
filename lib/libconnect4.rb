@@ -30,13 +30,46 @@ module LibConnect4
             @board.transpose
         end
 
-        def diagonals
-            # TODO: this method!
-            []
-        end
-
         def each
             self.rows.flat_map {|row| row.each }
+        end
+
+        def right_diagonals
+            # "shifting" rows from the top down and taking the resulting columns gets you a right-diagonal:
+            # | I J K L |
+            # | E F G H |
+            # | A B C D |
+            # gets shifted to
+            # | I J K L |
+            #   | E F G H |
+            #     | A B C D |
+            # Then just work your way "up" each column, and you have a right-diagonal.
+            (0..(@row_count - 1)).map do |i|
+                prefix = Array.new(@row_count - i)
+                suffix = Array.new(i)
+                prefix.concat(@board[i]).concat(suffix)
+            end.transpose.map do |diag|
+                diag.select {|x| x != nil }
+            end
+        end
+
+        def left_diagonals
+            # "shifting" rows from the bottom up and taking the resulting columns gets you a left-diagonal:
+            # | I J K L |
+            # | E F G H |
+            # | A B C D |
+            # gets shifted to
+            #     | I J K L |
+            #   | E F G H |
+            # | A B C D |
+            # Then just work your way "up" each column, and you have a left-diagonal.
+            (0..(@row_count - 1)).map do |i|
+                prefix = Array.new(i)
+                suffix = Array.new(@row_count - i)
+                prefix.concat(@board[i]).concat(suffix)
+            end.transpose.map do |diag|
+                diag.select {|x| x != nil }
+            end
         end
 
         def to_s
@@ -78,24 +111,35 @@ module LibConnect4
 
         def winner
             # check rows
-            winner = self.check_cell_groups(@board.rows, @board.column_count - 3)
+            winner = self.check_cell_groups(@board.rows)
             if (winner != nil) then 
                 return winner 
             end
             # check cols
-            winner = self.check_cell_groups(@board.columns, @board.row_count - 3)
+            winner = self.check_cell_groups(@board.columns)
             if (winner != nil) then 
                 return winner 
             end
 
             # check diagonals
+            winner = self.check_cell_groups(@board.right_diagonals.select {|diag| diag.length >=4 })
+            if winner != nil then
+                return winner
+            end
+
+            winner = self.check_cell_groups(@board.left_diagonals.select {|diag| diag.length >=4 })
+            if winner != nil then
+                return winner
+            end
+
+
             # Step one: identify diagonals from game board
         end
 
         protected
-        def check_cell_groups(cell_groups, last_cell_to_check)
+        def check_cell_groups(cell_groups)
             for group in cell_groups do
-                for i in 0..last_cell_to_check do
+                for i in 0..(group.length - 3) do
                     winner_exists = self.all_the_same_color([
                         group[i],
                         group[i+1],
