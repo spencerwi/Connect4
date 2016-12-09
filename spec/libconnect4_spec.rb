@@ -31,6 +31,16 @@ RSpec.describe LibConnect4::Game do
             expect { @game.move(LibConnect4::Red, 4) }.to raise_error(LibConnect4::InvalidMoveError)
         end
 
+        it "keeps track of all valid moves attempted" do
+            @game.move(LibConnect4::Red, 4)
+            @game.move(LibConnect4::Black, 5)
+
+            expect(@game.moves).to eq [
+                {player: LibConnect4::Red, column: 4},
+                {player: LibConnect4::Black, column: 5}
+            ]
+        end
+
         context "when Red has won" do
             it "can correctly identify Red as the winner across" do
                 (0..3).each {|x| @game.move(LibConnect4::Red, x)}

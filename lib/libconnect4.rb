@@ -91,15 +91,18 @@ module LibConnect4
 
     class Game
         attr_reader :board
+        attr_reader :moves
 
         def initialize
             @board = LibConnect4::Board.new
+            @moves = []
         end
 
         def move(player, column) 
             if self.can_move_in_column? column then
                 row = @board.columns[column].find_index { |cell| cell == LibConnect4::Empty } 
                 @board[row, column] = player
+                moves.push({player: player, column: column})
             else
                 raise InvalidMoveError, "You cannot move there"
             end
@@ -161,6 +164,9 @@ module LibConnect4
             end
             return true
         end
+    end
+
+    class AI_Player 
     end
 
     class InvalidMoveError < RuntimeError
