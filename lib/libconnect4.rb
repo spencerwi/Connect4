@@ -72,6 +72,14 @@ module LibConnect4
             end
         end
 
+        def is_full?(column)
+            not (self.columns[column].any? {|cell| cell == LibConnect4::Empty })
+        end
+
+        def available_moves
+            (0..(self.column_count-1)).reject {|col| self.is_full? col }
+        end
+
         def to_s
             rows.reverse.map do |row|
                 cells = row.map do |cell| 
@@ -93,24 +101,22 @@ module LibConnect4
         attr_reader :board
         attr_reader :moves
 
-        def initialize
+        def initialize(board: LibConnect4::Board.new)
             @board = LibConnect4::Board.new
             @moves = []
         end
 
         def move(player, column) 
-            if self.can_move_in_column? column then
+            if @board.is_full? column then
+                raise InvalidMoveError, "You cannot move there"
+            else
                 row = @board.columns[column].find_index { |cell| cell == LibConnect4::Empty } 
                 @board[row, column] = player
                 moves.push({player: player, column: column})
-            else
-                raise InvalidMoveError, "You cannot move there"
             end
         end
 
-        def can_move_in_column?(col)
-            @board.columns[col].any? {|cell| cell == LibConnect4::Empty }
-        end
+
 
         def winner
             # check rows
@@ -167,6 +173,82 @@ module LibConnect4
     end
 
     class AI_Player 
+        attr_reader :my_color, :opponent_color, :lookahead_distance
+        Easy = :Easy
+        Hard = :Hard
+
+        def initialize(my_color, difficulty = LibConnect4::AI_Player::Easy) 
+            @my_color = my_color
+            @opponent_color = 
+                if @my_color == LibConnect4::Red then 
+                    LibConnect4::Black
+                else 
+                    LibConnect4::Red 
+                end
+            @lookahead_distance = 
+                if difficulty == LibConnect4::AI_Player::Easy then
+                    1
+                else
+                    3
+                end
+        end
+
+        def score_possible_board_state board_state
+            # TODO: scoring mechanism!
+        end
+
+        def should_stop_searching? board_state, moves_ahead
+            board_is_full = (board_state.available_moves == [])
+            game_with_this_board = LibConnect4::Game.new(board: board_state)
+            (board_is_full || (moves_ahead >= @lookahead_distance) || (game_with_this_board.winner != nil))
+        end
+
+        def decide_next_move board
+            alphabeta(board, 0, -(Float::INFINITY), Float::INFINITY, true)[:board]
+        end
+
+        def alphabeta board, current_moves_ahead, alpha, beta, is_my_move
+            # Minimax algorithm using "alpha-beta pruning" to cut off branches that score too far out of range
+            # "alpha" is the best score that the AI is guaranteed to get, determined based on board state;
+            # "beta" is the worst score that the opponent is guaranteed to get, determined based on board state;
+            if should_stop_searching? board, current_moves_ahead then
+                {board: board, score: self.score_possible_board_state(board)}
+            else
+                if is_my_move then
+                    best_move_value_for_this_branch = -(Float::INFINITY) 
+                    # Of all the possible moves, since it's our turn, we want to 
+                    #   see if there's one we can find that's better than our current "best", so we can pick the best route
+                    board.available_moves.each do |move|
+                        best_move_value_for_this_branch = board.clone
+                        game_for_next_move = Game.new(board: board_for_next_move)
+                        game_for_next_move.move @my_color, move
+                        best_move_value_for_this_branch = [best_move_value_for_this_branch, alphabeta(game_for_next_move.board, current_moves_ahead+1, alpha, beta, false)[:score]].max
+                        alpha = [alpha, best_move_value_for_this_branch].max
+                        if beta <= a then
+                            #  If the most damaging move the opponent can make can make brings them more value than we can get on this branch, don't explore this branch any further
+                            break
+                        end
+                    end
+                    return {board: board_for_next_move, score: best_move_value_for_this_branch}
+                else
+                    worst_move_value_for_this_branch = Float::INFINITY
+                    # Of all the possible moves, since it's the opponent's turn, we want to 
+                    #   see what move they could make that'd be worst for us, so we can pick the least-risky route
+                    board.available_moves.each do |move|
+                        board_for_next_move = board.clone
+                        game_for_next_move = Game.new(board: board_for_next_move)
+                        game_for_next_move.move @opponent_color, move
+                        worst_move_value_for_this_branch = [worst_move_value_for_this_branch, alphabeta(game_for_next_move.board, current_moves_ahead+1, alpha, beta, true)[:score]].min
+                        beta = [beta, worst_move_value_for_this_branch].min
+                        if beta <= a then
+                            #  If the most damaging move the opponent can make can make brings them more value than we can get on this branch, don't explore this branch any further
+                            break
+                        end
+                    end
+                    return {board: board_for_next_move, score: worst_move_value_for_this_branch}
+                end
+            end
+        end
     end
 
     class InvalidMoveError < RuntimeError
