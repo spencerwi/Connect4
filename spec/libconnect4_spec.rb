@@ -15,6 +15,23 @@ RSpec.describe LibConnect4 do
             # Column 3 should no longer be an available move
             expect(game.board.available_moves).to eq ((0..game.board.column_count-1).select {|col| col != 3 })
         end
+
+        it "can identify whether a particular cell is fillable" do
+            game = LibConnect4::Game.new
+
+            # At the outset, only cells on row 0 are fillable
+            (0..(game.board.column_count - 1)).each do |col|
+                expect(game.board.is_fillable? 0, col).to be true
+
+                (1..(game.board.row_count - 1)).each do |row|
+                    expect(game.board.is_fillable? row, col).to be false
+                end
+            end
+
+            # After the first move in a column, the second row slot in that column is fillable
+            game.move LibConnect4::Red, 3
+            expect(game.board.is_fillable? 1, 3).to be true
+        end
     end
 
     describe "Game" do
@@ -23,7 +40,7 @@ RSpec.describe LibConnect4 do
             expect(game.board.row_count).to eq 6
             expect(game.board.column_count).to eq 7
             game.board.each do |cell|
-                expect(cell).to eq LibConnect4::Empty
+                expect(cell.value).to eq LibConnect4::Empty
             end
         end
 
