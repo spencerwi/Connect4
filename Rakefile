@@ -17,10 +17,16 @@ task :repl do
             move = ai.decide_next_move game.board
             game.move ai.my_color, move
             puts game.board
+            if (game.winner) then
+                puts "Winner: #{game.winner}"
+            end
         end
         move_me = Proc.new do |col|
             game.move LibConnect4::Red, col
             puts game.board
+            if (game.winner) then
+                puts "Winner: #{game.winner}"
+            end
         end
         binding.pry
     rescue LoadError

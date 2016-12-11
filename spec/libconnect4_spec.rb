@@ -226,5 +226,25 @@ RSpec.describe LibConnect4 do
             hard_ai = LibConnect4::AI_Player.new LibConnect4::Black, LibConnect4::AI_Player::Hard
             expect(easy_ai.lookahead_distance).to be < hard_ai.lookahead_distance
         end
+
+        context "during a game" do
+            before(:each) do 
+                @game = LibConnect4::Game.new
+                @ai = LibConnect4::AI_Player.new LibConnect4::Black
+            end
+
+            it "wil block an opponent from a near-win" do
+                3.times { @game.move @ai.opponent_color, 3}
+
+                expect(@ai.decide_next_move(@game.board)).to eq 3
+            end
+
+            it "will take an obvious winning move" do
+                3.times { @game.move @ai.my_color, 5}
+
+                expect(@ai.decide_next_move(@game.board)).to eq 5
+            end
+        end
+
     end
 end
