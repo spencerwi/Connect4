@@ -19,14 +19,13 @@ end
 
 
 def run_ai_move(game, ai)
-    ai_move = ai.decide_next_move game.board
-    game.move ai.my_color, ai_move
 end
 
 get '/api/game/new' do
     game = LibConnect4::Game.new   
     ai = LibConnect4::AI_Player.new(LibConnect4::Black)
-    run_ai_move(game, ai)
+    ai_move = ai.decide_next_move game.board
+    game.move(ai.my_color, ai_move)
     {
         game: game.to_h,
         ai: ai.to_h
@@ -35,9 +34,9 @@ end
 
 post '/api/game/move' do 
     # Read JSON in from request
-    game_and_move = JSON.parse(request.body.read)
-    puts game_and_move 
-    game = Game.new(board: game_and_move["game"]["board"], moves: game_and_move["game"]["moves"])
+    request_body = request.body.read
+    game_and_move = JSON.parse(request_body)
+    game = LibConnect4::Game.from_json game_and_move["game"]
     move = game_and_move["move"]
 
     # Apply player move
@@ -45,10 +44,15 @@ post '/api/game/move' do
 
     # If the player didn't already win, then get and apply the AI move
     if game.winner == nil then
-        ai = LibConnect4::AI_Player.new(LibConnect4::Black, difficulty: game_and_move["ai"]["difficulty"])
-        run_ai_move(game, ai)
+        ai = LibConnect4::AI_Player.from_json game_and_move["ai"]
+        ai_move = ai.decide_next_move game.board
+        puts "Move #{if ai.my_color.is_a? Symbol then ":" else "" end}#{ai.my_color} to #{ai_move}"
+        game.move(ai.my_color, ai_move)
     end
 
     # Return the result
-    game.to_json
+    {
+        game: game.to_h,
+        ai: ai.to_h
+    }.to_json
 end

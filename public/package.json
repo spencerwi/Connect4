@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack"
+    "start": "webpack && node-sass src/index.scss > dist/index.css"
   },
   "author": "",
   "license": "ISC",
@@ -18,10 +18,14 @@
     "@types/react": "^0.14.55",
     "@types/react-dom": "^0.14.19",
     "@types/whatwg-fetch": "0.0.32",
+    "css-loader": "^0.26.1",
     "es6-promise": "^4.0.5",
+    "node-sass": "^4.0.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "redux": "^3.6.0",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
     "whatwg-fetch": "^2.0.1"
   }
 }

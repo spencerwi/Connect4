@@ -25,8 +25,10 @@ export function appState(state: State = initialState, action: Action): State {
             // Request to the backend to play a move and get updated board
             console.log(`Play Move: ${action.column}`)
             fetch("/api/game/move", {
+                method: "POST",
                 body: JSON.stringify({
                     game: state.game,
+                    ai: state.ai,
                     move: action.column
                 })
             })

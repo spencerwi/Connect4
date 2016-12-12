@@ -21475,9 +21475,9 @@
 	    var startNewGame = function (difficulty) { return function (event) {
 	        props.store.dispatch(actions_1.newGame(difficulty, function (a) { return props.store.dispatch(a); }));
 	    }; };
-	    var onMovePlayed = function (col) { return function (event) {
+	    var onMovePlayed = function (col) {
 	        props.store.dispatch(actions_1.playMove(col, function (a) { return props.store.dispatch(a); }));
-	    }; };
+	    };
 	    if (state.game != null) {
 	        return React.createElement(game_1.Game, { game: state.game, onStartNewGame: startNewGame, onMovePlayed: onMovePlayed });
 	    }
@@ -21528,9 +21528,7 @@
 	var React = __webpack_require__(1);
 	exports.Cell = function (props) {
 	    var playMove = function (col) { return function (event) {
-	        event.preventDefault();
 	        props.onMovePlayed(col);
-	        // dispatch playMove event in column to Store
 	    }; };
 	    return React.createElement("div", { className: "cell " + props.cell.value, onClick: playMove(props.cell.col) });
 	};
@@ -22629,8 +22627,10 @@
 	            // Request to the backend to play a move and get updated board
 	            console.log("Play Move: " + action.column);
 	            fetch("/api/game/move", {
+	                method: "POST",
 	                body: JSON.stringify({
 	                    game: state.game,
+	                    ai: state.ai,
 	                    move: action.column
 	                })
 	            })

@@ -8,9 +8,7 @@ export interface CellProps {
 }
 export const Cell = (props: CellProps) => {
     let playMove = (col: number) => (event) => {
-        event.preventDefault();
         props.onMovePlayed(col);
-        // dispatch playMove event in column to Store
     }
     return <div className={`cell ${props.cell.value}`} onClick={playMove(props.cell.col)}></div>
 }

@@ -14,7 +14,7 @@ export const App = (props: AppProps) => {
             newGame(difficulty, (a: Action) => props.store.dispatch(a))
         );
     }
-    let onMovePlayed = (col: number) => (event) => {
+    let onMovePlayed = (col: number) => {
         props.store.dispatch(
             playMove(col, (a: Action) => props.store.dispatch(a))
         );

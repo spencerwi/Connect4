@@ -13,9 +13,21 @@ module LibConnect4Dtos
         def to_json
             self.to_h.to_json
         end
-        def self.from_json string
-            data = JSON.load string
-            self.new(data['row'], data['col'], value: data['value'])
+    end
+    refine LibConnect4::Cell.singleton_class do
+        def from_json input
+            if input.is_a? String then
+                data = JSON.load input
+            else
+                data = input
+            end
+            value = nil
+            if data['value'].is_a? String then
+                value = data['value'].to_sym
+            else
+                value = data['value']
+            end
+            self.new(data['row'], data['col'], value: value)
         end
     end
 
@@ -23,8 +35,14 @@ module LibConnect4Dtos
         def to_json
             rows.map {|row| row.map {|cell| cell.to_h } }
         end
-        def self.from_json string
-            data = JSON.load string
+    end
+    refine LibConnect4::Board.singleton_class do
+        def from_json input
+            if input.is_a? String then
+                data = JSON.load input
+            else
+                data = input
+            end
             cells = data.map {|row| row.map {|cell_json| LibConnect4::Cell.from_json cell_json} }
             self.new(contents: cells)
         end
@@ -41,8 +59,14 @@ module LibConnect4Dtos
         def to_json
             self.to_h.to_json
         end
-        def self.from_json string
-            data = JSON.load string
+    end
+    refine LibConnect4::Game.singleton_class do
+        def from_json input
+            if input.is_a? String then
+                data = JSON.load input
+            else
+                data = input
+            end
             board = LibConnect4::Board.from_json data['board']
             self.new(board: board, moves: data['moves'])
         end
@@ -58,9 +82,21 @@ module LibConnect4Dtos
         def to_json
             self.to_h.to_json
         end
-        def self.from_json string
-            data = JSON.load string
-            self.new(my_color: data['my_color'], difficulty: data['difficulty'])
+    end
+    refine LibConnect4::AI_Player.singleton_class do
+        def from_json input
+            if input.is_a? String then
+                data = JSON.load input
+            else
+                data = input
+            end
+            my_color = nil
+            if data['my_color'].is_a? String then
+                my_color = data['my_color'].to_sym
+            else
+                my_color = data['my_color']
+            end
+            self.new(my_color, difficulty: data['difficulty'])
         end
     end
 end

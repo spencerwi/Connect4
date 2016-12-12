@@ -1,0 +1,24 @@
+.board {
+    width: 80vw;
+    margin-bottom: 10vh;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column-reverse;
+    background: yellow;
+
+    .row {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+
+        .cell {
+            width: 100%;
+            height: 8vh;
+            border-radius: 10px;
+            border: 1px solid goldenrod;
+            &.Red { background: red; }
+            &.Black { background: black; }
+            &.Empty { background: white; }
+        }
+    }
+}

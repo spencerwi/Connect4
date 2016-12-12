@@ -48,9 +48,6 @@ module LibConnect4
             if winner != nil then
                 return winner
             end
-
-
-            # Step one: identify diagonals from game board
         end
 
         protected
