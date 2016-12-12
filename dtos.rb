@@ -35,7 +35,8 @@ module LibConnect4Dtos
             {
                 board: @board.to_json,
                 moves: @moves,
-                winner: @winner
+                winner: @winner,
+                ai: ai_player.to_h
             }
         end
         def to_json

@@ -1,19 +1,24 @@
+var CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
+
 module.exports = {
-    entry: "./src/main.ts",
+    entry: "./src/index.tsx",
     output: {
-        filename: "app.js",
+        filename: "bundle.js",
         path: __dirname + "/dist"
     },
     devtool: "source-map",
     resolve: {
-        extensions: ["", ".ts", ".js"]
+        extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
     },
     module: {
         loaders: [
-            {test: /\.ts$/, loader: "awesome-typescript-loader"}
+            {test: /\.tsx?$/, loader: "awesome-typescript-loader"}
         ],
         preLoaders: [
             {test: /\.js$/, loader: "source-map-loader"}
         ]
-    }
+    },
+    plugins: [
+        new CheckerPlugin()
+    ]
 }
