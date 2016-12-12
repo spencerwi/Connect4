@@ -2,6 +2,8 @@ require 'sinatra'
 require 'json'
 
 require './lib/libconnect4'
+require './dtos'
+using LibConnect4Dtos
 
 set :public_folder, "public"
 enable :static
@@ -17,7 +19,7 @@ end
 
 get '/api/game/new' do
     game = LibConnect4::Game.new   
-    game.to_h.to_json
+    game.to_json
 end
 
 post '/api/game/move' do 
@@ -38,5 +40,5 @@ post '/api/game/move' do
     end
 
     # Return the result
-    game.to_h.to_json
+    game.to_json
 end

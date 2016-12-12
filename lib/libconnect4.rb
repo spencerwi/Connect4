@@ -7,17 +7,10 @@ module LibConnect4
     class Cell
         attr_reader :row, :col
         attr_accessor :value
-        def initialize(row, col)
+        def initialize(row, col, value: LibConnect4::Empty)
             @row = row
             @col = col
-            @value = LibConnect4::Empty
-        end
-        def to_h 
-            {
-                row: @row,
-                col: @col,
-                value: @value
-            }
+            @value = value
         end
     end
 
@@ -113,10 +106,6 @@ module LibConnect4
             (0..(@column_count-1)).reject {|col| self.is_full? col }
         end
 
-        def to_a 
-            rows.map {|row| row.map {|cell| cell.to_h}}
-        end
-
         def to_s
             rows.reverse.map do |row|
                 cells = row.map do |cell| 
@@ -184,14 +173,6 @@ module LibConnect4
             # Step one: identify diagonals from game board
         end
 
-        def to_h
-            {
-                board: @board.to_a,
-                moves: @moves,
-                winner: @winner
-            }
-        end
-
         protected
         def check_cell_groups(cell_groups)
             for group in cell_groups do
@@ -238,6 +219,14 @@ module LibConnect4
                 else
                     3
                 end
+        end
+
+        def difficulty 
+            case @lookahead_distance
+            when 1 then LibConnect4::AI_Player::Easy
+            else LibConnect4::AI_Player::Hard
+            end
+
         end
 
         def score_possible_board_state(board_state)
