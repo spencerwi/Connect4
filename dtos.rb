@@ -3,7 +3,7 @@ require './lib/libconnect4.rb'
 
 module LibConnect4Dtos
     refine LibConnect4::Cell do
-        def to_hash # Needed to avoid issues with nested to_json calls on the Board's to_json
+        def to_h # Needed to avoid issues with nested to_json calls on the Board's to_json
             {
                 row: @row,
                 col: @col,
@@ -11,7 +11,7 @@ module LibConnect4Dtos
             }
         end
         def to_json
-            self.to_hash.to_json
+            self.to_h.to_json
         end
         def self.from_json string
             data = JSON.load string
@@ -21,7 +21,7 @@ module LibConnect4Dtos
 
     refine LibConnect4::Board do
         def to_json
-            rows.map {|row| row.map {|cell| cell.to_hash } }
+            rows.map {|row| row.map {|cell| cell.to_h } }
         end
         def self.from_json string
             data = JSON.load string
@@ -31,16 +31,15 @@ module LibConnect4Dtos
     end
 
     refine LibConnect4::Game do
-        def to_hash
+        def to_h
             {
                 board: @board.to_json,
                 moves: @moves,
-                winner: @winner,
-                ai: ai_player.to_h
+                winner: @winner
             }
         end
         def to_json
-            self.to_hash.to_json
+            self.to_h.to_json
         end
         def self.from_json string
             data = JSON.load string
@@ -50,14 +49,14 @@ module LibConnect4Dtos
     end
 
     refine LibConnect4::AI_Player do
-        def to_hash
+        def to_h
             {
                 my_color: @my_color,
                 difficulty: self.difficulty
             }
         end
         def to_json
-            self.to_hash.to_json
+            self.to_h.to_json
         end
         def self.from_json string
             data = JSON.load string

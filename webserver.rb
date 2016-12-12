@@ -17,26 +17,36 @@ get "/" do
     redirect "/index.html"
 end
 
+
+def run_ai_move(game, ai)
+    ai_move = ai.decide_next_move game.board
+    game.move ai.my_color, ai_move
+end
+
 get '/api/game/new' do
     game = LibConnect4::Game.new   
-    game.to_json
+    ai = LibConnect4::AI_Player.new(LibConnect4::Black)
+    run_ai_move(game, ai)
+    {
+        game: game.to_h,
+        ai: ai.to_h
+    }.to_json
 end
 
 post '/api/game/move' do 
     # Read JSON in from request
-    game_and_move = JSON.parse request.body.read
+    game_and_move = JSON.parse(request.body.read)
     puts game_and_move 
     game = Game.new(board: game_and_move["game"]["board"], moves: game_and_move["game"]["moves"])
     move = game_and_move["move"]
 
     # Apply player move
-    game.move LibConnect4::Red, move
+    game.move(LibConnect4::Red, move)
 
     # If the player didn't already win, then get and apply the AI move
     if game.winner == nil then
-        ai = LibConnect4::AI_Player.new LibConnect4::Black
-        ai_move = ai.decide_next_move game.board
-        game.move ai_player.my_color, ai_move
+        ai = LibConnect4::AI_Player.new(LibConnect4::Black, difficulty: game_and_move["ai"]["difficulty"])
+        run_ai_move(game, ai)
     end
 
     # Return the result

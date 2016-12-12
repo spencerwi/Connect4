@@ -8,3 +8,9 @@ ReactDOM.render(
     document.querySelector("#app")
 );
 
+store.subscribe(() => {
+    ReactDOM.render(
+        <App store={store} />,
+        document.querySelector("#app")
+    );
+})
