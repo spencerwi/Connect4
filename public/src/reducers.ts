@@ -9,13 +9,12 @@ export function appState(state: State = initialState, action: Action): State {
     switch(action.type){
         case "NEW_GAME":{
             console.log(`New Game: ${action.difficulty}`)
-            fetch("/api/game/new")
+            fetch(`/api/game/new?difficulty=${action.difficulty}`)
                 .then(response => response.json())
                 .then(game => { action.dispatch(newGameCreated(game)) });
             break;
         }
         case "NEW_GAME_CREATED": {
-            console.log(`New Game: ${JSON.stringify(action.state)}`)
             let {game, ai} = action.state
             state.game = game;
             state.ai = ai;
@@ -37,13 +36,11 @@ export function appState(state: State = initialState, action: Action): State {
             break;
         }
         case "MOVE_PLAYED": {
-            console.log(`Move Played: ${action.updatedState}`)
             let {game, ai} = action.updatedState;
             state.game = game;
             state.ai = ai;
             break;
         }
     }
-    console.log(`State: ${JSON.stringify(state)}`)
     return state;
 }

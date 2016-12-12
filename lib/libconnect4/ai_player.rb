@@ -21,7 +21,7 @@ module LibConnect4
                 if difficulty == LibConnect4::AI_Player::Easy then
                     1
                 else
-                    3
+                    2
                 end
         end
 
@@ -30,7 +30,6 @@ module LibConnect4
             when 1 then LibConnect4::AI_Player::Easy
             else LibConnect4::AI_Player::Hard
             end
-
         end
 
         def score_possible_board_state(board_state)

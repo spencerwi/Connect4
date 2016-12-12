@@ -21472,14 +21472,17 @@
 	var actions_1 = __webpack_require__(181);
 	exports.App = function (props) {
 	    var state = props.store.getState();
-	    var startNewGame = function (difficulty) { return function (event) {
+	    var onStartNewGame = function (difficulty) {
 	        props.store.dispatch(actions_1.newGame(difficulty, function (a) { return props.store.dispatch(a); }));
+	    };
+	    var startNewGame = function (difficulty) { return function (event) {
+	        onStartNewGame(difficulty);
 	    }; };
 	    var onMovePlayed = function (col) {
 	        props.store.dispatch(actions_1.playMove(col, function (a) { return props.store.dispatch(a); }));
 	    };
 	    if (state.game != null) {
-	        return React.createElement(game_1.Game, { game: state.game, onStartNewGame: startNewGame, onMovePlayed: onMovePlayed });
+	        return React.createElement(game_1.Game, { game: state.game, onStartNewGame: onStartNewGame, onMovePlayed: onMovePlayed });
 	    }
 	    else {
 	        return React.createElement("div", { className: "app" },
@@ -22611,13 +22614,12 @@
 	    switch (action.type) {
 	        case "NEW_GAME": {
 	            console.log("New Game: " + action.difficulty);
-	            fetch("/api/game/new")
+	            fetch("/api/game/new?difficulty=" + action.difficulty)
 	                .then(function (response) { return response.json(); })
 	                .then(function (game) { action.dispatch(actions_1.newGameCreated(game)); });
 	            break;
 	        }
 	        case "NEW_GAME_CREATED": {
-	            console.log("New Game: " + JSON.stringify(action.state));
 	            var _a = action.state, game = _a.game, ai = _a.ai;
 	            state.game = game;
 	            state.ai = ai;
@@ -22639,14 +22641,12 @@
 	            break;
 	        }
 	        case "MOVE_PLAYED": {
-	            console.log("Move Played: " + action.updatedState);
 	            var _b = action.updatedState, game = _b.game, ai = _b.ai;
 	            state.game = game;
 	            state.ai = ai;
 	            break;
 	        }
 	    }
-	    console.log("State: " + JSON.stringify(state));
 	    return state;
 	}
 	exports.appState = appState;

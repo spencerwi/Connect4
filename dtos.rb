@@ -53,7 +53,7 @@ module LibConnect4Dtos
             {
                 board: @board.to_json,
                 moves: @moves,
-                winner: @winner
+                winner: self.winner
             }
         end
         def to_json
@@ -96,7 +96,13 @@ module LibConnect4Dtos
             else
                 my_color = data['my_color']
             end
-            self.new(my_color, difficulty: data['difficulty'])
+            difficulty = nil
+            if data['difficulty'].is_a? String then
+                difficulty = data['difficulty'].to_sym
+            else
+                difficulty = data['difficulty']
+            end
+            self.new(my_color, difficulty)
         end
     end
 end

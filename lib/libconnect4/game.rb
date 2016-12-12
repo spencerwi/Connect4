@@ -53,27 +53,21 @@ module LibConnect4
         protected
         def check_cell_groups(cell_groups)
             for group in cell_groups do
-                for i in 0..(group.length - 3) do
-                    winner_exists = self.all_the_same_color([
-                        group[i],
-                        group[i+1],
-                        group[i+2],
-                        group[i+3]
-                    ])
+                for a,b,c,d in group.each_cons(4) do
+                    winner_exists = self.all_the_same_color([a,b,c,d])
                     if (winner_exists) then
-                        return group[i].value
+                        return a.value
                     end
                 end
             end
             return nil
         end
         def all_the_same_color(cells) 
-            for i in (0..(cells.length - 2)) do
-                if cells[i].value == LibConnect4::Empty or cells[i].value != cells[i+1].value then
-                    return false
-                end
+            if cells.any? {|c| c.value == LibConnect4::Empty } then
+                false
+            else 
+                cells.all? {|c| c.value == cells[0].value }
             end
-            return true
         end
     end
 end

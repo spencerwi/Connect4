@@ -228,23 +228,42 @@ RSpec.describe LibConnect4 do
         end
 
         context "during a game" do
-            before(:each) do 
-                @game = LibConnect4::Game.new
-                @ai = LibConnect4::AI_Player.new LibConnect4::Black
+            context "a hard AI" do
+                before(:each) do
+                    @game = LibConnect4::Game.new
+                    @ai = LibConnect4::AI_Player.new(LibConnect4::Black, LibConnect4::AI_Player::Hard)
+                end
+
+                it "will block an opponent from a near-win" do
+                    3.times { @game.move @ai.opponent_color, 3}
+
+                    expect(@ai.decide_next_move(@game.board)).to eq 3
+                end
+
+                it "will take an obvious winning move" do
+                    3.times { @game.move @ai.my_color, 5}
+
+                    expect(@ai.decide_next_move(@game.board)).to eq 5
+                end
             end
+            context "a easy AI" do
+                before(:each) do
+                    @game = LibConnect4::Game.new
+                    @ai = LibConnect4::AI_Player.new(LibConnect4::Black, LibConnect4::AI_Player::Easy)
+                end
 
-            it "wil block an opponent from a near-win" do
-                3.times { @game.move @ai.opponent_color, 3}
+                it "will block an opponent from a near-win" do
+                    3.times { @game.move @ai.opponent_color, 3}
 
-                expect(@ai.decide_next_move(@game.board)).to eq 3
-            end
+                    expect(@ai.decide_next_move(@game.board)).to eq 3
+                end
 
-            it "will take an obvious winning move" do
-                3.times { @game.move @ai.my_color, 5}
+                it "will take an obvious winning move" do
+                    3.times { @game.move @ai.my_color, 5}
 
-                expect(@ai.decide_next_move(@game.board)).to eq 5
+                    expect(@ai.decide_next_move(@game.board)).to eq 5
+                end
             end
         end
-
     end
 end

@@ -9,10 +9,13 @@ export interface AppProps {
 }
 export const App = (props: AppProps) => {
     let state = props.store.getState();
-    let startNewGame = (difficulty: Domain.Difficulty) => (event) => {
+    let onStartNewGame = (difficulty: Domain.Difficulty) => {
         props.store.dispatch(
             newGame(difficulty, (a: Action) => props.store.dispatch(a))
         );
+    }
+    let startNewGame = (difficulty: Domain.Difficulty) => (event) => {
+        onStartNewGame(difficulty);
     }
     let onMovePlayed = (col: number) => {
         props.store.dispatch(
@@ -20,7 +23,7 @@ export const App = (props: AppProps) => {
         );
     }
     if (state.game != null){
-        return <Game game={state.game} onStartNewGame={startNewGame} onMovePlayed={onMovePlayed}></Game>
+        return <Game game={state.game} onStartNewGame={onStartNewGame} onMovePlayed={onMovePlayed}></Game>
     } else {
         return <div className="app">
             <h1>Connect 4</h1>
