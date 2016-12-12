@@ -12,6 +12,13 @@ module LibConnect4
             @col = col
             @value = LibConnect4::Empty
         end
+        def to_h 
+            {
+                row: @row,
+                col: @col,
+                value: @value
+            }
+        end
     end
 
     class Board 
@@ -106,6 +113,10 @@ module LibConnect4
             (0..(@column_count-1)).reject {|col| self.is_full? col }
         end
 
+        def to_a 
+            rows.map {|row| row.map {|cell| cell.to_h}}
+        end
+
         def to_s
             rows.reverse.map do |row|
                 cells = row.map do |cell| 
@@ -127,13 +138,13 @@ module LibConnect4
         attr_reader :board
         attr_reader :moves
 
-        def initialize(board: nil)
+        def initialize(board: nil, moves: [])
             if board != nil then
                 @board = LibConnect4::Board.new(contents: board.rows)
             else
                 @board = LibConnect4::Board.new
             end
-            @moves = []
+            @moves = moves
         end
 
         def move(player, column) 
@@ -145,8 +156,6 @@ module LibConnect4
                 moves.push({player: player, column: column})
             end
         end
-
-
 
         def winner
             # check rows
@@ -173,6 +182,14 @@ module LibConnect4
 
 
             # Step one: identify diagonals from game board
+        end
+
+        def to_h
+            {
+                board: @board.to_a,
+                moves: @moves,
+                winner: @winner
+            }
         end
 
         protected
