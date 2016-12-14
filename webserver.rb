@@ -49,8 +49,9 @@ post '/api/game/move' do
     puts game.board
 
     puts "Winner: #{game.winner}"
-    # If the player didn't already win, then get and apply the AI move
-    if game.winner == nil then
+
+    # If the player didn't already win, and the board isn't full, then get and apply the AI move
+    if game.winner == nil and not game.board.available_moves.empty? then
         puts game_and_move["ai"]
         ai = LibConnect4::AI_Player.from_json game_and_move["ai"]
         ai_move = ai.decide_next_move game.board
@@ -58,7 +59,6 @@ post '/api/game/move' do
         puts game.board
         puts "Winner: #{game.winner}"
         game.move(ai.my_color, ai_move)
-
     end
 
     # Return the result

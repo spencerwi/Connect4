@@ -50,10 +50,14 @@ module LibConnect4Dtos
 
     refine LibConnect4::Game do
         def to_h
+            winner = self.winner
+            if winner == nil and @board.available_moves.empty? then
+                winner = :Draw
+            end
             {
                 board: @board.to_json,
                 moves: @moves,
-                winner: self.winner
+                winner: winner
             }
         end
         def to_json
