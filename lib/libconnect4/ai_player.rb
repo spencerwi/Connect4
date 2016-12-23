@@ -127,12 +127,18 @@ module LibConnect4
                 two_moves_away_score => [
                     [LibConnect4::Empty, LibConnect4::Empty, @my_color, @my_color],
                     [@my_color, LibConnect4::Empty, LibConnect4::Empty, @my_color],
-                    [@my_color, @my_color, LibConnect4::Empty, LibConnect4::Empty]
+                    [@my_color, @my_color, LibConnect4::Empty, LibConnect4::Empty],
+                    [LibConnect4::Empty, @my_color, @my_color, LibConnect4::Empty],
+                    [@my_color, LibConnect4::Empty, @my_color, LibConnect4::Empty],
+                    [LibConnect4::Empty, @my_color, LibConnect4::Empty, @my_color]
                 ],
                 -(two_moves_away_score) => [
                     [LibConnect4::Empty, LibConnect4::Empty, @opponent_color, @opponent_color],
                     [@opponent_color, LibConnect4::Empty, LibConnect4::Empty, @opponent_color],
-                    [@opponent_color, @opponent_color, LibConnect4::Empty, LibConnect4::Empty]
+                    [@opponent_color, @opponent_color, LibConnect4::Empty, LibConnect4::Empty],
+                    [LibConnect4::Empty, @opponent_color, @opponent_color, LibConnect4::Empty],
+                    [@opponent_color, LibConnect4::Empty, @opponent_color, LibConnect4::Empty],
+                    [LibConnect4::Empty, @opponent_color, LibConnect4::Empty, @opponent_color]
                 ]
             }
 
